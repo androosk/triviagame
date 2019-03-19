@@ -1,0 +1,56 @@
+body {
+  background-image: url(../images/starfield_wallpaper.jpg);
+}
+.game-container {
+  background-image: url(../images/big_background.jpg);
+  background-size:cover;
+  margin: auto;
+  width: 70%;
+  margin-top: 30px;
+  }
+.heading-container {
+  padding-top: 40px;
+  width: 70%;
+  margin: auto;
+}
+.game-area {
+  margin-top: 70px;
+  width: 80%;
+}
+h1, h2 {
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 100px;
+  color: white;
+  text-align: center;
+}
+h2 {
+  font-size: 50px;
+  font-style: italic;
+  text-align: right;
+}
+p {
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+  font-size: 35px;
+  line-height: 33px;
+  color: white;
+  padding: 20px 0 20px 0;
+}
+
+.hover-box {
+  border: solid 4px green;
+  background: orange;
+  cursor: pointer;
+  padding: -4px 0 -4px 0;
+}
+.hover-p {
+  color: black;
+}
+.right-answer-pick {
+  border: solid 4px black;
+  background: green;
+}
+.wrong-answer-pick {
+  border: solid 4px black;
+  background: red;
+}
