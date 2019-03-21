@@ -13,7 +13,12 @@
 </head>
 
 <body>
+    <iframe src="assets/sounds/silence.mp3" allow="autoplay" id="audio" style="display:none"></iframe>
 
+
+  <!-- <audio id="player" autoplay>
+    <source src="assets/sounds/intro.mp3" type="audio/mpeg">
+  </audio> -->
 
   <div class="game-container"> <!--Game container top-->
     <div class="heading-container">
@@ -22,14 +27,11 @@
         <h2>Trivia Challenge</h2>
       </header>
     </div>
-      <div class="container-fluid game-area">
-        <div id="game-timer"></div>
-        <div id="question-area"></div>
-        <div id="answer-one"></div>
-        <div id="answer-two"></div>
-        <div id="answer-three"></div>
-        <div id="answer-four"></div>
+      <div id="win-loss" class="picture-box"></div>
+      <div id="start-finish" class="container-fluid">
+        <p id="temp-box" class="temp-box">CLICK HERE TO PLAY</p>
       </div>
+      <div id="game-box" class="container-fluid"></div>
 
 
   </div> <!--Game container end-->

@@ -1,5 +1,18 @@
-var questNum = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
 var ansVal = []
+var game = false
+var currentState = ""
+var currentAnswers = []
+var rightWrong = ""
+var clickVal = 0
+var i = -2
+var loop = 10
+var intervalId
+var wrongTrack = ""
+var wrongGuesses = 0
+var rightGuesses = 0
+var rightAnswer = new Audio("assets/sounds/goodie_goodie.mp3")
+var wrongAnswer = new Audio("assets/sounds/bazinga.mp3")
+var introSong = new Audio("assets/sounds/intro.mp3")
 var questionsAnswers = {
   question1 : "What was Howard's age when his father left him with his mother?",
   answer1 : ["11","10","12","13"],
@@ -22,118 +35,146 @@ var questionsAnswers = {
   question10 : "What is the name of the smart phone app developed by the group?",
   answer10 : ["Lenwolopalli", "Project Nodlehs", "Project Shoe", "Koothraleonhow"],
 }
+var gameText = [
+  "<div><p id='game-timer'></p></div>",
+  "<div><p id='question-area' class='question-row'></p></div>",
+  "<div class='answer-row'><p id='answer-one' class='answer_from_user'></p></div>",
+  "<div class='answer-row'><p id='answer-two' class='answer_from_user'></p></div>",
+  "<div class='answer-row'><p id='answer-three' class='answer_from_user'></p></div>",
+  "<div class='answer-row'><p id='answer-four' class='answer_from_user'></p></div>"]
+
 var gameKeys = Object.keys(questionsAnswers)
 
+introSong.play()
 
-var i = 0
+// $(document).ready(function(){
+//   $("#game-box").toggle
+// })
 
-gameCore()
+$("#temp-box").click(function() {
+  $("#temp-box").toggle()
+  console.log("start-finish")
+  fillGame()
+})
 
-function gameCore () {
-var t = gameKeys[questNum[i]]
-var u = gameKeys[questNum[i]+1]
-var currentQuestion = questionsAnswers[t]
-var currentAnswers = questionsAnswers[u]
+function fillGame () {
+  $("#game-box").addClass("game-area")
+  for (var k=0; k < 6; k++) {
+    $("#game-box").append(gameText[k])
+  }
+  addFunctionality()
+  introSong.pause()
+  introSong.currentTime = 0
+  nextQuestion()
+}
 
+function addFunctionality () {
+$('#answer-one, #answer-two, #answer-three, #answer-four').hover(function () {
+  $(this).addClass('hover-box');
+}, function () {
+  $(this).removeClass('hover-box');
+});
 
+$('.answer_from_user').click(function(){
+  var clickVal = $(this).attr('data-value')
+  clearInterval(intervalId)
+  if (ansVal[clickVal] === 0) {
+    rightGuesses++
+    currentState = "right"
+    rightWrong = "You are correct!"
+    $(this).addClass("right-answer-pick")
+    rightAnswer.play()
+    answerTime()
+  }
+  else {
+    wrongTrack = this
+    youWrong()
+  }
+})
+}
 
-pickOrder()
-
-
+function youWrong() {
+  $(wrongTrack).addClass("wrong-answer-pick")
+  clearInterval(intervalId)
+  currentState = "wrong"
+  rightWrong = "Sorry, that was incorrect."
+  wrongGuesses++
+  wrongAnswer.play()
+  answerTime()
+}
 
 function pickOrder() {
-  for (z=0; z < 4; z++) {
+  for (var z=0; z < 4; z++) {
     var num = Math.floor(Math.random() * 4)
-      if (ansVal.includes(num) === false) {
-        ansVal.push(num)
-      }
-      else {
-        z--
-      }
+    if (ansVal.includes(num) === false) {
+      ansVal.push(num)
+    }
+    else {
+      z--
+    }
   }
 }
 
-//TODO Remove jump from hover functions
-$("#answer-one").hover(function() {
-  $("#answer-one").addClass("hover-box", "hover-p")
-})
-$("#answer-one").mouseleave(function() {
-  $("#answer-one").removeClass("hover-box")
-})
-$("#answer-two").hover(function() {
-  $("#answer-two").addClass("hover-box")
-})
-$("#answer-two").mouseleave(function() {
-  $("#answer-two").removeClass("hover-box")
-})
-$("#answer-three").hover(function() {
-  $("#answer-three").addClass("hover-box")
-})
-$("#answer-three").mouseleave(function() {
-  $("#answer-three").removeClass("hover-box")
-})
-$("#answer-four").hover(function() {
-  $("#answer-four").addClass("hover-box")
-})
-$("#answer-four").mouseleave(function() {
-  $("#answer-four").removeClass("hover-box")
-})
-
-$("#answer-one").click(function() {
-  $("#answer-one").removeClass("hover-box")
-  i++
-  //TODO Temporarily remove hoverabililty from other boxes
-  if (ansVal[0] === 0) {
-    $("#answer-one").addClass("right-answer-pick")
+function nextQuestion() {
+  i += 2
+  if (i <= 18) {
+    loop = 10
+    ansVal = []
+    clickVal = 0
+    questionTimer()
+    pickOrder()
+    var t = gameKeys[i]
+    var u = gameKeys[i+1]
+    var currentQuestion = questionsAnswers[t]
+    currentAnswers = questionsAnswers[u]
+    $("#game-timer").text("Seconds Remaining: " + loop)
+    $("#question-area").text(currentQuestion)
+    $("#answer-one").text(currentAnswers[ansVal[0]]).attr("data-value", "0")
+    $("#answer-two").text(currentAnswers[ansVal[1]]).attr("data-value", "1")
+    $("#answer-three").text(currentAnswers[ansVal[2]]).attr("data-value", "2")
+    $("#answer-four").text(currentAnswers[ansVal[3]]).attr("data-value", "3")
   }
   else {
-    $("#answer-one").addClass("wrong-answer-pick")
+    gameOver()
   }
-})
-$("#answer-two").click(function() {
-  $("#answer-two").removeClass("hover-box")
-  i++
-  //TODO Temporarily remove hoverabililty from other boxes
-  if (ansVal[1] === 0) {
-    $("#answer-two").addClass("right-answer-pick")
-  }
-  else {
-    $("#answer-two").addClass("wrong-answer-pick")
-  }
-})
-$("#answer-three").click(function() {
-  $("#answer-three").removeClass("hover-box")
-  i++
-  //TODO Temporarily remove hoverabililty from other boxes
-  if (ansVal[2] === 0) {
-    $("#answer-three").addClass("right-answer-pick")
-  }
-  else {
-    $("#answer-three").addClass("wrong-answer-pick")
-  }
-})
-$("#answer-four").click(function() {
-  $("#answer-four").removeClass("hover-box")
-  i++
-  //TODO Temporarily remove hoverabililty from other boxes
-  if (ansVal[3] === 0) {
-    $("#answer-four").addClass("right-answer-pick")
-  }
-  else {
-    $("#answer-four").addClass("wrong-answer-pick")
-  }
-})
-
-$("#game-timer").append("<p>Stupid timer</p>")
-$("#question-area").append("<p>"+currentQuestion+"</p>")
-$("#answer-one").append("<p>"+currentAnswers[ansVal[0]]+"</p>")
-$("#answer-two").append("<p>"+currentAnswers[ansVal[1]]+"</p>")
-$("#answer-three").append("<p>"+currentAnswers[ansVal[2]]+"</p>")
-$("#answer-four").append("<p>"+currentAnswers[ansVal[3]]+"</p>")
-
-
 }
 
-// if (i < 10) {
-//   gameCore()
-// }
+function questionTimer() {
+  clearInterval(intervalId)
+  intervalId =setInterval(decrement, 1000)
+}
+function decrement() {
+  loop--
+  $("#game-timer").text("Seconds Remaining: " + loop)
+  if (loop === 0) {
+    clearInterval(intervalId)
+    $("#game-timer").text("TIME'S UP")
+    youWrong()
+
+    }
+  }
+
+function answerTime() {
+  $("#game-box").toggle()
+  $("#win-loss").append("<img id='picture-picture' class='picture-box-more' src='assets/images/"+currentState+"answer"+i+".gif'>")
+  $("#win-loss").append("<p id='answer-answer'>" + rightWrong + " The Current Answer is "+currentAnswers[0]+"</p>")
+  setTimeout(function(){
+    $('#picture-picture').remove(), $("#answer-answer").remove()}, 3000)
+  setTimeout(function() {
+    $("#game-box").toggle(), $(".answer_from_user").removeClass(currentState+"-answer-pick"), nextQuestion()}, 3000)
+}
+function gameOver() {
+  console.log("game over")
+  $("#game-box").toggle()
+  $("#temp-box").toggle()
+  // $("#answer-one").prev("#answer-one").attr("id","answerone")
+  // $("#game-timer").text("GAME OVER")
+  // $("#question-area").text("THANK YOU FOR PLAYING!")
+  // $("#answer-one").text("CORRECT GUESSES: "+rightGuesses)
+  // $("#answer-two").html("<br></br>")
+  // $("#answer-three").text("INCORRECT GUESSES: "+wrongGuesses)
+  // $("#answer-four").html("<br></br>")
+  // $("#game-box").toggle()
+  // $("#win-loss").append("<img id='picture-picture' class='picture-box-more' src='assets/images/"+currentState+"answer"+i+".gif'>")
+  // $("#win-loss").append("<p id='answer-answer'>" + rightWrong + " The Current Answer is "+currentAnswers[0]+"</p>")
+}
