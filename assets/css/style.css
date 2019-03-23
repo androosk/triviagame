@@ -71,7 +71,7 @@ p {
     font-size: 30px;
   }
   p {
-    font-size: 20px;
+    font-size: 30px;
     line-height: 30px;
   }
   .hover-box {
@@ -99,7 +99,7 @@ p {
     margin-bottom: 0px
   }
   .answer-row {
-    height: 35px;
+    height: 45px;
   }
   .temp-box {
     margin-top: 60px;
