@@ -159,7 +159,7 @@ function decrement() {
 function answerTime() {
   $("#game-box").toggle()
   $("#win-loss").toggle()
-  $("#win-loss").append("<img id='picture-picture' src='assets/images/"+currentState+"answer"+i+".gif'>")
+  $("#win-loss").append("<img id='picture-picture' class='picture-box' src='assets/images/"+currentState+"answer"+i+".gif'>")
   $("#win-loss").append("<p id='answer-answer'>" + incorrectAnswer + currentAnswers[0] + correctAnswer + "</p>")
   setTimeout(function(){
     $('#picture-picture').remove(), $("#answer-answer").remove(), $("#answer-answer2").remove()}, 5000)
