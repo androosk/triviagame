@@ -1,15 +1,16 @@
 var ansVal = []
-var game = false
 var currentState = ""
+var currentQuestion = []
 var currentAnswers = []
-var rightWrong = ""
+var correctAnswer = ""
+var incorrectAnswer = ""
 var clickVal = 0
 var i = -2
 var loop = 10
 var intervalId
-var wrongTrack = ""
 var wrongGuesses = 0
 var rightGuesses = 0
+var unAnswered = 0
 var rightAnswer = new Audio("assets/sounds/goodie_goodie.mp3")
 var wrongAnswer = new Audio("assets/sounds/bazinga.mp3")
 var introSong = new Audio("assets/sounds/intro.mp3")
@@ -35,74 +36,74 @@ var questionsAnswers = {
   question10 : "What is the name of the smart phone app developed by the group?",
   answer10 : ["Lenwolopalli", "Project Nodlehs", "Project Shoe", "Koothraleonhow"],
 }
-var gameText = [
-  "<div><p id='game-timer'></p></div>",
-  "<div><p id='question-area' class='question-row'></p></div>",
-  "<div class='answer-row'><p id='answer-one' class='answer_from_user'></p></div>",
-  "<div class='answer-row'><p id='answer-two' class='answer_from_user'></p></div>",
-  "<div class='answer-row'><p id='answer-three' class='answer_from_user'></p></div>",
-  "<div class='answer-row'><p id='answer-four' class='answer_from_user'></p></div>"]
-
+//Set up var of keys for calling questions and answers out of object
 var gameKeys = Object.keys(questionsAnswers)
-
-introSong.play()
-
-// $(document).ready(function(){
-//   $("#game-box").toggle
-// })
-
-$("#temp-box").click(function() {
-  $("#temp-box").toggle()
-  console.log("start-finish")
-  fillGame()
+//Hide game play area div and bring up "Click Here to Start" text and play theme song
+$(document).ready(function(){
+  $("#game-box").toggle()
+  $("#win-loss").toggle()
+  introSong.play()
 })
-
-function fillGame () {
-  $("#game-box").addClass("game-area")
-  for (var k=0; k < 6; k++) {
-    $("#game-box").append(gameText[k])
-  }
-  addFunctionality()
+//After player clicks to start, hide start-finish div and bring up game play area div
+$("#temp-box").click(function() {
+  $("#start-finish").toggle()
+  $("#temp-box").toggle()
+  $("#game-box").toggle()
+  startGame()
+})
+//Stop theme music if it's playing and start questions
+function startGame () {
   introSong.pause()
   introSong.currentTime = 0
   nextQuestion()
 }
-
-function addFunctionality () {
+//Hover function for question divs
 $('#answer-one, #answer-two, #answer-three, #answer-four').hover(function () {
   $(this).addClass('hover-box');
 }, function () {
   $(this).removeClass('hover-box');
 });
-
+//Click function for player to choose question
 $('.answer_from_user').click(function(){
-  var clickVal = $(this).attr('data-value')
-  clearInterval(intervalId)
+  var clickVal = $(this).attr('data-value') //Grab data attribute from selected div
+  clearInterval(intervalId) //Stop question timer
+  //Check validity of selected answer. All correct answers are at position 0 in the answer array.
+  //Evaluate if clicked value ansVal[clickVal] equals zero. If it does, the answer clicked is correct.
+  //Load the correct answer variables and run answerTime function
   if (ansVal[clickVal] === 0) {
     rightGuesses++
     currentState = "right"
-    rightWrong = "You are correct!"
+    correctAnswer = " is correct!"
+    incorrectAnswer = ""
     $(this).addClass("right-answer-pick")
     rightAnswer.play()
     answerTime()
   }
+  //If ansVal[clickVal] is not equal to zero, the answer is incorrect. Run youWrong function
   else {
-    wrongTrack = this
+    // wrongTrack = this
     youWrong()
   }
 })
-}
-
+  //Stop the timer. Play the incorrect answer audio. Determine whether a wrong answer was chosen or player ran out of time.
+  //Load the appropriate variables and run answerTime function
 function youWrong() {
-  $(wrongTrack).addClass("wrong-answer-pick")
   clearInterval(intervalId)
   currentState = "wrong"
-  rightWrong = "Sorry, that was incorrect."
-  wrongGuesses++
   wrongAnswer.play()
-  answerTime()
+  correctAnswer = ""
+  if (loop === 0) {
+    incorrectAnswer = "You ran out of time. The correct answer is "
+    answerTime()
+    unAnswered++
+  }
+  else {
+    incorrectAnswer = "Sorry, that was incorrect. The correct answer is "
+    answerTime()
+    wrongGuesses++
+  }
 }
-
+//Pick a random order for the answers to populate the game field
 function pickOrder() {
   for (var z=0; z < 4; z++) {
     var num = Math.floor(Math.random() * 4)
@@ -114,18 +115,20 @@ function pickOrder() {
     }
   }
 }
-
+//Evaluate if the game is over. If it is not, start the question timer over, choose the order of answers for this question
+//and populate the question and answer divs.
+//If the game is over, run the gameOver function
 function nextQuestion() {
   i += 2
   if (i <= 18) {
-    loop = 10
+    loop = 20
     ansVal = []
     clickVal = 0
     questionTimer()
     pickOrder()
     var t = gameKeys[i]
     var u = gameKeys[i+1]
-    var currentQuestion = questionsAnswers[t]
+    currentQuestion = questionsAnswers[t]
     currentAnswers = questionsAnswers[u]
     $("#game-timer").text("Seconds Remaining: " + loop)
     $("#question-area").text(currentQuestion)
@@ -138,7 +141,7 @@ function nextQuestion() {
     gameOver()
   }
 }
-
+//Question timer function
 function questionTimer() {
   clearInterval(intervalId)
   intervalId =setInterval(decrement, 1000)
@@ -148,33 +151,39 @@ function decrement() {
   $("#game-timer").text("Seconds Remaining: " + loop)
   if (loop === 0) {
     clearInterval(intervalId)
-    $("#game-timer").text("TIME'S UP")
     youWrong()
-
     }
   }
-
+//After validity of player answer is determined, hide the game play area and show
+//the appropriate image and text based on answer validity
 function answerTime() {
   $("#game-box").toggle()
-  $("#win-loss").append("<img id='picture-picture' class='picture-box-more' src='assets/images/"+currentState+"answer"+i+".gif'>")
-  $("#win-loss").append("<p id='answer-answer'>" + rightWrong + " The Current Answer is "+currentAnswers[0]+"</p>")
+  $("#win-loss").toggle()
+  $("#win-loss").append("<img id='picture-picture' src='assets/images/"+currentState+"answer"+i+".gif'>")
+  $("#win-loss").append("<p id='answer-answer'>" + incorrectAnswer + currentAnswers[0] + correctAnswer + "</p>")
   setTimeout(function(){
-    $('#picture-picture').remove(), $("#answer-answer").remove()}, 3000)
+    $('#picture-picture').remove(), $("#answer-answer").remove(), $("#answer-answer2").remove()}, 5000)
   setTimeout(function() {
-    $("#game-box").toggle(), $(".answer_from_user").removeClass(currentState+"-answer-pick"), nextQuestion()}, 3000)
+    $("#game-box").toggle(), $(".answer_from_user").removeClass(currentState+"-answer-pick"), $("#win-loss").toggle(), nextQuestion()}, 5000)
 }
+//Hide the game play div
+//Show the click here to play button
+//Show the previous game statistics
+//Reset statistics from previous game
+//Play game music
+//Wait for click to start a new game
 function gameOver() {
-  console.log("game over")
   $("#game-box").toggle()
   $("#temp-box").toggle()
-  // $("#answer-one").prev("#answer-one").attr("id","answerone")
-  // $("#game-timer").text("GAME OVER")
-  // $("#question-area").text("THANK YOU FOR PLAYING!")
-  // $("#answer-one").text("CORRECT GUESSES: "+rightGuesses)
-  // $("#answer-two").html("<br></br>")
-  // $("#answer-three").text("INCORRECT GUESSES: "+wrongGuesses)
-  // $("#answer-four").html("<br></br>")
-  // $("#game-box").toggle()
-  // $("#win-loss").append("<img id='picture-picture' class='picture-box-more' src='assets/images/"+currentState+"answer"+i+".gif'>")
-  // $("#win-loss").append("<p id='answer-answer'>" + rightWrong + " The Current Answer is "+currentAnswers[0]+"</p>")
+  $("#start-finish").toggle()
+  $("#startfinish1").text("GAME OVER")
+  $("#startfinish2").text("THANK YOU FOR PLAYING!")
+  $("#startfinish3").text("CORRECT GUESSES: "+rightGuesses)
+  $("#startfinish4").text("INCORRECT GUESSES: "+wrongGuesses)
+  $("#startfinish5").text("UNANSWERED QUESTIONS: "+unAnswered)
+  i = -2
+  rightGuesses = 0
+  wrongGuesses = 0
+  unAnswered = 0
+  introSong.play()
 }

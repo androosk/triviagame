@@ -6,6 +6,7 @@
   <!-- if using bootstrap 4.3.1 -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <!--if creating stylesheet-->
+  <link rel="shortcut icon" href="assets/images/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" type="text/css" href="assets/css/reset.css">
   <link rel="stylesheet" type="text/css" href="assets/css/style.css">
   <meta charset="UTF-8">
@@ -13,12 +14,8 @@
 </head>
 
 <body>
+    <!-- Get Chrome to play intro music without user interaction -->
     <iframe src="assets/sounds/silence.mp3" allow="autoplay" id="audio" style="display:none"></iframe>
-
-
-  <!-- <audio id="player" autoplay>
-    <source src="assets/sounds/intro.mp3" type="audio/mpeg">
-  </audio> -->
 
   <div class="game-container"> <!--Game container top-->
     <div class="heading-container">
@@ -27,11 +24,23 @@
         <h2>Trivia Challenge</h2>
       </header>
     </div>
-      <div id="win-loss" class="picture-box"></div>
+      <div id="win-loss" class="container-fluid text-center"></div>
       <div id="start-finish" class="container-fluid">
         <p id="temp-box" class="temp-box">CLICK HERE TO PLAY</p>
+        <p id="startfinish1"></p>
+        <p id="startfinish2"></p>
+        <p id="startfinish3"></p>
+        <p id="startfinish4"></p>
+        <p id="startfinish5"></p>
       </div>
-      <div id="game-box" class="container-fluid"></div>
+      <div id="game-box" class="game-area container-fluid">
+          <div><p id='game-timer'></p></div>
+          <div><p id='question-area' class='question-row'></p></div>
+          <div class='answer-row'><p id='answer-one' class='answer_from_user'></p></div>
+          <div class='answer-row'><p id='answer-two' class='answer_from_user'></p></div>
+          <div class='answer-row'><p id='answer-three' class='answer_from_user'></p></div>
+          <div class='answer-row'><p id='answer-four' class='answer_from_user'></p></div>
+      </div>
 
 
   </div> <!--Game container end-->
